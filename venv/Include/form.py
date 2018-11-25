@@ -64,7 +64,7 @@ class MyFrame1(wx.Frame):
 
 
 class MainApp(wx.App):
- def OnInit(self):
+  def OnInit(self):
   mainFrame = MyFrame1(None)
   mainFrame.Show(True)
   return True

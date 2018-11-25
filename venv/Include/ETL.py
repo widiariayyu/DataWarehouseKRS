@@ -36,8 +36,8 @@ kab = "SELECT id_kabupaten, nm_kabupaten, id_provinsi FROM tb_mahasiswa INNER JO
 mhs = "SELECT id_mahasiswa,NIM,nama,alamat,tgl_lahir,tempat_lahir,id_kabupaten,agama,no_telp,jenis_kelamin,status_perkawinan,status_bekerja,email FROM tb_mahasiswa INNER JOIN tb_kabupaten USING (id_kabupaten) INNER JOIN tb_provinsi USING (id_provinsi) GROUP BY id_mahasiswa"
 krs = "SELECT tanggal, kode_matkul,id_mahasiswa,id_semester,jenis_kelamin,id_PA,id_prodi, sks, status_keaktifan FROM tb_detailkrs INNER JOIN tb_krs USING (id_krs) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_pa USING (id_PA) INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_semester USING (id_semester) INNER JOIN tb_prodi USING (id_prodi) "
 khs = "SELECT id_semester,id_mahasiswa,kode_matkul,nilai,indeks FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester) GROUP BY id_mahasiswa,id_semester"
-ips ="SELECT id_semester,id_mahasiswa,SUM(nilai)/(COUNT(nilai*sks)*sks) FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester) GROUP BY id_mahasiswa,id_semester"
-ipk = "SELECT SUM(nilai)/(COUNT(nilai*sks)*sks) FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester)"
+ips ="SELECT id_semester,id_mahasiswa,SUM(nilai)/(COUNT(nilai*sks)*sks),SUM(nilai)/(COUNT(nilai*sks)*sks) FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester) GROUP BY id_mahasiswa,id_semester"
+# ipk = "SELECT SUM(nilai)/(COUNT(nilai*sks)*sks) FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester)"
 
 myresult = function_select(smt, mydb)
 matkul_result = function_select(matkul, mydb)
@@ -50,7 +50,7 @@ mhs_result = function_select(mhs,mydb)
 krs_result = function_select(krs, mydb)
 khs_result = function_select(khs,mydb)
 ips_result = function_select(ips,mydb)
-ipk_result = function_select(ipk, mydb)
+# ipk_result = function_select(ipk, mydb)
 
 
 for x in myresult:
@@ -144,13 +144,14 @@ for x in ips_result:
     id_smt = x[0]
     id_mhs = x[1]
     ips = x[2]
-    dim_indeks = "INSERT INTO dim_indeks (id_semester,id_mhs,IPS) VALUES (%d,%d,%f)" %(id_smt,id_mhs,ips)
+    ipk = x[3]
+    dim_indeks = "INSERT INTO dim_indeks (id_semester,id_mhs,IPS,IPK) VALUES (%d,%d,%f,%f)" %(id_smt,id_mhs,ips,ipk)
     function_insert(dim_indeks,mydb2)
 
-for x in ipk_result:
-    ipk = x[0]
-    ipk_field = "INSERT INTO dim_indeks (IPK) VALUES (%f)" %(ipk)
-    function_insert(ipk_field,mydb2)
+# for x in ipk_result:
+#     ipk = x[0]
+#     ipk_field = "INSERT INTO dim_indeks (IPK) VALUES (%f)" %(ipk)
+#     function_insert(ipk_field,mydb2)
 
 
 
