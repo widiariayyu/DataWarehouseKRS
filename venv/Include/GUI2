@@ -1,0 +1,4 @@
+import wx
+
+app = wx.App()
+wx.MessageBox('Adi ganteng bgt', 'WE WE WE WE WE', wx.OK | wx.ICON_INFORMATION)
