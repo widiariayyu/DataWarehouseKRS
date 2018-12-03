@@ -158,7 +158,7 @@ class MyFrame2(wx.Frame):
         self.m_inputnim.SetFocus()
         self.m_textIPS.Clear()
         self.m_textIPK.Clear()
-        self.m_textIPS.AppendText(str(total_nilai / total_sks))
+        self.m_textIPS.AppendText("%.2f"% (total_nilai / total_sks))
 
         ipk = "SELECT IPK FROM dim_indeks INNER JOIN dim_mahasiswa USING (id_mhs) INNER JOIN dim_semester USING (id_semester)  WHERE id_semester ='"+str(semester)+"' && YEAR(tahun_ajaran)='"+tahun+"' && NIM LIKE '%"+self.m_inputnim.Value+"%'"
         mycursor.execute(ipk)

@@ -53,6 +53,7 @@ class MyFrame1(wx.Frame):
 
         self.m_grid2 = wx.grid.Grid(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
 
+
         # Grid
         self.m_grid2.CreateGrid(10, 3)
         self.m_grid2.EnableEditing(True)

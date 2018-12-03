@@ -16,7 +16,9 @@ mydb2 = mysql.connector.connect(
   database="db_simak"
 )
 
+
 # class EtlGui(wx.Dialog):
+#
 #     def function_select(sql, mydb):
 #         mycursor = mydb.cursor()
 #         mycursor.execute(sql)
@@ -358,7 +360,7 @@ class NilaiGui(wx.Dialog):
         self.m_staticText4.Wrap(-1)
         gSizer2.Add(self.m_staticText4, 0, wx.ALL, 5)
 
-        self.m_textIPS = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_textIPS = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 30)
         gSizer2.Add(self.m_textIPS, 0, wx.ALL, 5)
 
         self.m_staticText51 = wx.StaticText(self, wx.ID_ANY, u"Indeks Prestasi  Kumulatif (IPK)", wx.DefaultPosition,
@@ -366,7 +368,7 @@ class NilaiGui(wx.Dialog):
         self.m_staticText51.Wrap(-1)
         gSizer2.Add(self.m_staticText51, 0, wx.ALL, 5)
 
-        self.m_textIPK = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_textIPK = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 30)
         gSizer2.Add(self.m_textIPK, 0, wx.ALL, 5)
 
         bSizer5.Add(gSizer2, 1, wx.EXPAND, 5)
@@ -409,37 +411,20 @@ class NilaiGui(wx.Dialog):
             total_sks = total_sks + rows[i][2]
             for j in range(0, len(rows[i])):
                 self.m_grid3.SetCellValue(i, j, str(rows[i][j]))
-        self.m_inputnim.SetFocus()
-        self.m_textIPS.Clear()
-        self.m_textIPK.Clear()
-        self.m_textIPS.AppendText(str(total_nilai / total_sks))
+                self.m_inputnim.SetFocus()
+                self.m_textIPS.Clear()
+                self.m_textIPK.Clear()
+                self.m_textIPS.AppendText("%.2f"%(total_nilai / total_sks))
 
-        ipk = "SELECT IPK FROM dim_indeks INNER JOIN dim_mahasiswa USING (id_mhs) INNER JOIN dim_semester USING (id_semester)  WHERE id_semester ='"+str(semester)+"' && YEAR(tahun_ajaran)='"+tahun+"' && NIM LIKE '%"+self.m_inputnim.Value+"%'"
-        mycursor.execute(ipk)
-        a = mycursor.fetchone()
-        self.m_textIPK.AppendText(str(a[0]))
+                ipk = "SELECT IPK FROM dim_indeks INNER JOIN dim_mahasiswa USING (id_mhs) INNER JOIN dim_semester USING (id_semester)  WHERE id_semester ='"+str(semester)+"' && YEAR(tahun_ajaran)='"+tahun+"' && NIM LIKE '%"+self.m_inputnim.Value+"%'"
+                mycursor.execute(ipk)
+                a = mycursor.fetchone()
+                self.m_textIPK.AppendText(str(a[0]))
 
 class MyDialog(wx.Dialog):
     """"""
 
     #----------------------------------------------------------------------
-    def __init__(self):
-        """Constructor"""
-        wx.Dialog.__init__(self, None, title="Options")
-
-        radio1 = wx.RadioButton( self, -1, " Radio1 ", style = wx.RB_GROUP )
-        radio2 = wx.RadioButton( self, -1, " Radio2 " )
-        radio3 = wx.RadioButton( self, -1, " Radio3 " )
-
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(radio1, 0, wx.ALL, 5)
-        sizer.Add(radio2, 0, wx.ALL, 5)
-        sizer.Add(radio3, 0, wx.ALL, 5)
-
-        for i in range(3):
-            chk = wx.CheckBox(self, label="Checkbox #%s" % (i+1))
-            sizer.Add(chk, 0, wx.ALL, 5)
-        self.SetSizer(sizer)
 
 
 ########################################################################
@@ -463,7 +448,7 @@ class MyForm(wx.Frame):
 
         procetl = etl.Append(wx.NewId(), "Proses ETL",
                                             "Show Proses ETL")
-        # self.Bind(wx.EVT_MENU, self.onEtl, procetl)
+        self.Bind(wx.EVT_MENU, self.onEtl, procetl)
 
         exitMenuItem = etl.Append(wx.NewId(), "Exit",
                                        "Exit the application")
@@ -495,10 +480,11 @@ class MyForm(wx.Frame):
         dlg.Destroy()
 
     # ----------------------------------------------------------------------
-    # def onEtl(self, event):
-    #     dlg = EtlGui()
-    #     dlg.ShowModal()
-    #     dlg.Destroy()
+    def onEtl(self, event):
+        dlg = EtlGui()
+        dlg.ShowModal()
+        dlg.Destroy()
+
 
     # ----------------------------------------------------------------------
     def onMhs(self, event):

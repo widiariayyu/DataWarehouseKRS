@@ -1,5 +1,19 @@
 import mysql.connector
 
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  passwd="",
+  database="db_akademik"
+)
+
+mydb2 = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  passwd="",
+  database="db_simak"
+)
+
 def function_select(sql, mydb):
     mycursor = mydb.cursor()
     mycursor.execute(sql)
@@ -37,11 +51,12 @@ mhs = "SELECT id_mahasiswa,NIM,nama,alamat,tgl_lahir,tempat_lahir,id_kabupaten,a
 krs = "SELECT tanggal, kode_matkul,id_mahasiswa,id_semester,jenis_kelamin,id_PA,id_prodi, sks, status_keaktifan FROM tb_detailkrs INNER JOIN tb_krs USING (id_krs) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_pa USING (id_PA) INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_semester USING (id_semester) INNER JOIN tb_prodi USING (id_prodi) "
 
 khs = "SELECT id_semester,id_mahasiswa,kode_matkul,nilai,indeks FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester) "
-=======
+
 khs = "SELECT id_semester,id_mahasiswa,kode_matkul,nilai,indeks FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester)"
 
-ips ="SELECT id_semester,id_mahasiswa,SUM(nilai)/(COUNT(nilai*sks)*sks),SUM(nilai)/(COUNT(nilai*sks)*sks) FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester) GROUP BY id_mahasiswa,id_semester"
-# ipk = "SELECT SUM(nilai)/(COUNT(nilai*sks)*sks) FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester)"
+ips ="SELECT id_semester,id_mahasiswa,SUM(nilai)/(COUNT(nilai*sks)*sks) FROM tb_khs INNER JOIN tb_matkul USING (kode_matkul) INNER JOIN tb_mahasiswa USING (id_mahasiswa) INNER JOIN tb_semester USING (id_semester) GROUP BY id_mahasiswa,id_semester"
+
+
 
 myresult = function_select(smt, mydb)
 matkul_result = function_select(matkul, mydb)
@@ -54,7 +69,7 @@ mhs_result = function_select(mhs,mydb)
 krs_result = function_select(krs, mydb)
 khs_result = function_select(khs,mydb)
 ips_result = function_select(ips,mydb)
-# ipk_result = function_select(ipk, mydb)
+
 
 
 for x in myresult:
@@ -84,6 +99,7 @@ for x in prov_result:
     nama = x[1]
     dim_prov = "INSERT INTO dim_provinsi(id_provinsi,nm_provinsi) VALUES(%d,'%s')" % (id, nama)
     function_insert(dim_prov, mydb2)
+
 
 for x in kab_result:
     id = x[0]
@@ -141,21 +157,38 @@ for x in khs_result:
     matkul = x[2]
     nilai = x[3]
     indeks = x[4]
-    fact_khs = "INSERT INTO fact_khs (id_semester,id_mhs,kode_matkul,nilai,indeks) VALUES (%d,%d,'%s',%d,'%s')" %(id_smt,id_mhs,matkul,nilai,indeks)
+    fact_khs = "INSERT INTO fact_khs (id_semester,id_mhs,kode_matkul,nilai,indeks) VALUES (%d,%d,'%s',%f,'%s')" %(id_smt,id_mhs,matkul,nilai,indeks)
     function_insert(fact_khs, mydb2)
 
-for x in ips_result:
-    id_smt = x[0]
-    id_mhs = x[1]
-    ips = x[2]
-    ipk = x[3]
-    dim_indeks = "INSERT INTO dim_indeks (id_semester,id_mhs,IPS,IPK) VALUES (%d,%d,%f,%f)" %(id_smt,id_mhs,ips,ipk)
+ipk = 0
+for x in range(len(ips_result)):
+    id_smt = ips_result[x][0]
+    id_mhs = ips_result[x][1]
+    ips = ips_result[x][2]
+
+
+    if x!=0 and x < (len(ips_result)-1) and ips_result[x-1][1] == ips_result[x][1] :
+        ipk = ipk+ips_result[x][2];
+        result = ipk/id_smt
+        print(result)
+    elif id_smt == 1:
+        ipk = 0
+        result = 0
+        ipk = ipk + ips
+        result = ipk/id_smt
+        print(result)
+    else:
+        ipk = 0
+        result = 0
+        print(result)
+
+
+    dim_indeks = "INSERT INTO dim_indeks (id_semester,id_mhs,IPS,IPK) VALUES ({:d},{:d},{:f},{:f})" .format(id_smt,id_mhs,ips,result)
     function_insert(dim_indeks,mydb2)
 
-# for x in ipk_result:
-#     ipk = x[0]
-#     ipk_field = "INSERT INTO dim_indeks (IPK) VALUES (%f)" %(ipk)
-#     function_insert(ipk_field,mydb2)
+
+
+
 
 
 
