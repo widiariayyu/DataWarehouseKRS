@@ -302,6 +302,99 @@ class MyFrame1(wx.Frame):
         self.m_panel2.SetSizer(bSizer411)
         self.m_panel2.Layout()
         self.m_notebook1.AddPage(self.m_panel2, u"Laporan KHS", True)
+        self.m_panel4 = wx.Panel(self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+
+        bSizer17.Fit(self.m_panel4)
+
+        bSizer17 = wx.BoxSizer(wx.VERTICAL)
+
+        bSizer19 = wx.BoxSizer(wx.VERTICAL)
+
+        bSizer20 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.m_staticText62 = wx.StaticText(self.m_panel4, wx.ID_ANY, u"Tahun", wx.DefaultPosition, wx.Size(200, -1), 0)
+        self.m_staticText62.Wrap(-1)
+        bSizer20.Add(self.m_staticText62, 0, wx.ALL, 5)
+
+        m_choice71Choices = [u"2018", u"2017"]
+        self.m_choice71 = wx.Choice(self.m_panel4, wx.ID_ANY, wx.DefaultPosition, wx.Size(110, -1), m_choice71Choices,
+                                    0)
+        self.m_choice71.SetSelection(0)
+        bSizer20.Add(self.m_choice71, 0, wx.ALL, 5)
+
+        bSizer19.Add(bSizer20, 1, wx.EXPAND, 5)
+
+        bSizer23 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.m_staticText10 = wx.StaticText(self.m_panel4, wx.ID_ANY, u"Semester", wx.DefaultPosition, wx.Size(200, -1),
+                                            0)
+        self.m_staticText10.Wrap(-1)
+        bSizer23.Add(self.m_staticText10, 0, wx.ALL, 5)
+
+        m_choice8Choices = [u"Ganjil", u"Genap", u"Pendek", u"Remidi"]
+        self.m_choice8 = wx.Choice(self.m_panel4, wx.ID_ANY, wx.DefaultPosition, wx.Size(110, -1), m_choice8Choices, 0)
+        self.m_choice8.SetSelection(0)
+        bSizer23.Add(self.m_choice8, 0, wx.ALL, 5)
+
+        bSizer19.Add(bSizer23, 1, wx.EXPAND, 5)
+
+        bSizer26 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.m_staticText12 = wx.StaticText(self.m_panel4, wx.ID_ANY, u"Matakuliah", wx.DefaultPosition,
+                                            wx.Size(200, -1), 0)
+        self.m_staticText12.Wrap(-1)
+        bSizer26.Add(self.m_staticText12, 0, wx.ALL, 5)
+
+        self.m_textCtrl1 = wx.TextCtrl(self.m_panel4, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer26.Add(self.m_textCtrl1, 0, wx.ALL, 5)
+
+        bSizer19.Add(bSizer26, 1, wx.EXPAND, 5)
+
+        self.m_button6 = wx.Button(self.m_panel4, wx.ID_ANY, u"Submit", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer19.Add(self.m_button6, 0, wx.ALL, 5)
+
+        bSizer17.Add(bSizer19, 1, wx.EXPAND, 5)
+
+        bSizer24 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_grid4 = wx.grid.Grid(self.m_panel4, wx.ID_ANY, wx.DefaultPosition, wx.Size(700, 500), 0)
+
+        # Grid
+        self.m_grid4.CreateGrid(20, 3)
+        self.m_grid4.EnableEditing(True)
+        self.m_grid4.EnableGridLines(True)
+        self.m_grid4.EnableDragGridSize(False)
+        self.m_grid4.SetMargins(0, 0)
+
+        # Columns
+        self.m_grid4.SetColSize(0, 153)
+        self.m_grid4.SetColSize(1, 241)
+        self.m_grid4.SetColSize(2, 137)
+        self.m_grid4.EnableDragColMove(False)
+        self.m_grid4.EnableDragColSize(True)
+        self.m_grid4.SetColLabelSize(30)
+        self.m_grid4.SetColLabelValue(0, u"NIM")
+        self.m_grid4.SetColLabelValue(1, u"Nama")
+        self.m_grid4.SetColLabelValue(2, u"Nilai")
+        self.m_grid4.SetColLabelAlignment(wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
+
+        # Rows
+        self.m_grid4.EnableDragRowSize(True)
+        self.m_grid4.SetRowLabelSize(100)
+        self.m_grid4.SetRowLabelAlignment(wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
+
+        # Label Appearance
+
+        # Cell Defaults
+        self.m_grid4.SetDefaultCellAlignment(wx.ALIGN_LEFT, wx.ALIGN_TOP)
+        bSizer24.Add(self.m_grid4, 0, wx.ALL, 5)
+
+        bSizer17.Add(bSizer24, 1, wx.EXPAND, 5)
+
+        self.m_panel4.SetSizer(bSizer17)
+        self.m_panel4.Layout()
+        bSizer17.Fit(self.m_panel4)
+        self.m_notebook1.AddPage(self.m_panel4, u"Daftar Nilai", True)
 
         bSizer4.Add(self.m_notebook1, 1, wx.EXPAND | wx.ALL, 5)
 
@@ -329,6 +422,7 @@ class MyFrame1(wx.Frame):
         self.m_button2.Bind(wx.EVT_BUTTON, self.lihat)
         self.m_buttonETL.Bind(wx.EVT_BUTTON, self.etl_test)
         self.m_button4.Bind(wx.EVT_BUTTON, self.onClick_test)
+        self.m_button6.Bind(wx.EVT_BUTTON,self.onClickNilai)
 
 
 
@@ -357,6 +451,31 @@ class MyFrame1(wx.Frame):
     def __del__(self):
         pass
 
+    def onClickNilai(self,event):
+        self.m_grid4.ClearGrid()
+        tahun = self.m_choice71.GetStringSelection()
+        semester = self.m_choice8.GetStringSelection()
+
+        # ipk = self.m_textIPK.AppendText()
+        if semester == 'Ganjil':
+            semester = 1
+        elif semester == 'Genap':
+            semester = 2
+        elif semester == 'Pendek':
+            semester = 3
+        else:
+            semester = 'Remidi'
+
+        mycursor = mydb2.cursor()
+        sql = "SELECT dim_mahasiswa.`NIM`,dim_mahasiswa.`nama_mhs`,indeks FROM fact_khs INNER JOIN dim_mahasiswa USING (id_mhs)" \
+              "INNER JOIN dim_matkul USING (id_matkul)" \
+              "INNER JOIN dim_semester USING (id_semester) " \
+              "WHERE id_semester = '"+str(semester)+"' && YEAR(tahun_ajaran)='"+tahun+"' && dim_matkul.`nama_matkul`LIKE '%" + self.m_textCtrl1.Value + "%'"
+        mycursor.execute(sql)
+        rows = mycursor.fetchall()
+        for i in range(0, len(rows)):
+            for j in range(0, len(rows[i])):
+                self.m_grid4.SetCellValue(i, j, str(rows[i][j]))
 
     def submit(self,event):
         self.m_grid2.ClearGrid()
