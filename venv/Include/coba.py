@@ -91,8 +91,7 @@ class MyFrame1(wx.Frame):
         self.m_button4 = wx.Button(self.m_panel6, wx.ID_ANY, u"Load Data", wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer14.Add(self.m_button4, 0, wx.ALL, 5)
 
-        self.m_button5 = wx.Button(self.m_panel6, wx.ID_ANY, u"Refresh Data", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer14.Add(self.m_button5, 0, wx.ALL, 5)
+
 
 
         bSizer13.Add(bSizer14, 1, wx.EXPAND, 5)
@@ -330,7 +329,7 @@ class MyFrame1(wx.Frame):
         self.m_button2.Bind(wx.EVT_BUTTON, self.lihat)
         self.m_buttonETL.Bind(wx.EVT_BUTTON, self.etl_test)
         self.m_button4.Bind(wx.EVT_BUTTON, self.onClick_test)
-        self.m_button5.Bind(wx.EVT_BUTTON,self.onLoad)
+
 
 
     def __del__(self):
@@ -341,6 +340,7 @@ class MyFrame1(wx.Frame):
         pass
 
     def onClick_test(self,event):
+        self.m_grid6.ClearGrid()
         tahun = self.m_choice7.GetStringSelection()
         mycursor = mydb2.cursor()
         sql = "SELECT update_log.`date`,master_id,master_name,start_row,end_row FROM update_log WHERE YEAR(date)='" + tahun + "' ORDER BY id DESC LIMIT 10"
@@ -350,10 +350,6 @@ class MyFrame1(wx.Frame):
             for j in range(0, len(rows[i])):
                 self.m_grid6.SetCellValue(i, j, str(rows[i][j]))
 
-    def onLoad(self,event):
-        self.m_grid6.ClearGrid()
-        history.main()
-        pass
 
     def onExit(self,event):
         self.Close()
@@ -386,8 +382,8 @@ class MyFrame1(wx.Frame):
 
     def lihat(self, event):
         self.m_grid3.ClearGrid()
-        tahun = self.m_tahun.GetStringSelection()
-        semester = self.m_semester.GetStringSelection()
+        tahun = self.m_tahun1.GetStringSelection()
+        semester = self.m_semester1.GetStringSelection()
         total_nilai = 0
         total_sks = 0
 
@@ -400,12 +396,12 @@ class MyFrame1(wx.Frame):
             semester = 3
         else:
             semester = 'Remidi'
-        mycursor = mydb2.cursor()
+        mycursor = mydb2.cursor(buffered=True)
+
         sql = "SELECT dim_matkul.kode_matkul,nama_matkul,sks,indeks,nilai FROM fact_khs INNER JOIN dim_matkul USING (id_matkul) " \
               "INNER JOIN dim_semester USING (id_semester) INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
             semester) + "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
         mycursor.execute(sql)
-
         rows = mycursor.fetchall()
         for i in range(0, len(rows)):
             total_nilai = total_nilai + rows[i][4]
@@ -422,7 +418,9 @@ class MyFrame1(wx.Frame):
             semester) + "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
         mycursor.execute(ipk)
         a = mycursor.fetchone()
+        print(a)
         self.m_textIPK.AppendText("%.2f" %(a[0]))
+
 
 
 class MainApp(wx.App):
