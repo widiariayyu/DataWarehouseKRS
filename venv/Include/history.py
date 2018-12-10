@@ -643,10 +643,14 @@ def main():
             start_row_add_krs = get_data[0][0]
             print(end_row_add_krs, start_row_add_krs)
         else:
+            krs = " SELECT  id_matkul,id_mahasiswa,id_semester,sks FROM tb_detailkrs " \
+                  "INNER JOIN tb_krs USING (id_krs) INNER JOIN tb_mahasiswa USING (id_mahasiswa) " \
+                  "INNER JOIN tb_matkul USING (id_matkul) " \
+                  "INNER JOIN tb_semester USING (id_semester) WHERE id_detail > "+format(max_fact_krs)+" "
             max_min_krs = " SELECT MIN(id_detail), MAX(id_detail) FROM tb_detailkrs" \
                           " WHERE id_detail > " + format(max_fact_krs)
 
-            print(khs)
+
             mycursor = mydb.cursor()
             mycursor.execute(max_min_krs)
             get_data = mycursor.fetchone()
@@ -658,7 +662,7 @@ def main():
             # print(end_row_add_member)
             start_row_add_krs = get_data[0]
             print(end_row_add_krs, start_row_add_krs)
-            krs_result = function_select(khs, mydb)
+            krs_result = function_select(krs, mydb)
             print(krs_result)
         for x in krs_result:
 

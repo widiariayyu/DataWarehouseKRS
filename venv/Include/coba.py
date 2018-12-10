@@ -91,7 +91,8 @@ class MyFrame1(wx.Frame):
         self.m_button4 = wx.Button(self.m_panel6, wx.ID_ANY, u"Load Data", wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer14.Add(self.m_button4, 0, wx.ALL, 5)
 
-
+        self.m_button5 = wx.Button(self.m_panel6, wx.ID_ANY, u"Truncate Data", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer14.Add(self.m_button5, 0, wx.ALL, 5)
 
 
         bSizer13.Add(bSizer14, 1, wx.EXPAND, 5)
@@ -527,18 +528,20 @@ class MyFrame1(wx.Frame):
             total_sks = total_sks + rows[i][2]
             for j in range(0, len(rows[i])):
                 self.m_grid3.SetCellValue(i, j, str(rows[i][j]))
+        a=total_nilai/total_sks
         self.m_inputnim.SetFocus()
         self.m_textIPS.Clear()
         self.m_textIPK.Clear()
         self.m_textIPS.AppendText("%.2f" % (total_nilai / total_sks))
+        self.m_textIPK.AppendText(".2f" % (a))
 
-        ipk = "SELECT IPK FROM fact_khs INNER JOIN dim_semester USING(id_semester) " \
-              "INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
-            semester) + "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
-        mycursor.execute(ipk)
-        a = mycursor.fetchone()
-        print(a)
-        self.m_textIPK.AppendText("%.2f" %(a[0]))
+        # ipk = "SELECT IPK FROM fact_khs INNER JOIN dim_semester USING(id_semester) " \
+        #       "INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
+        #     semester) + "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
+        # mycursor.execute(ipk)
+        # a = mycursor.fetchone()
+        # print(a)
+        # self.m_textIPK.AppendText("%.2f" %(a[0]))
 
 
 
