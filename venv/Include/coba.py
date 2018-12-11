@@ -505,24 +505,22 @@ class MyFrame1(wx.Frame):
         self.m_grid3.ClearGrid()
         tahun = self.m_tahun1.GetStringSelection()
         semester = self.m_semester1.GetStringSelection()
-        semester1 = self.m_semester1.GetStringSelection()
         total_nilai = 0
         total_sks = 0
 
         # ipk = self.m_textIPK.AppendText()
-        if semester == 'Ganjil':
-            semester = 1
-        elif semester == 'Genap':
-            semester = 2
-        elif semester == 'Pendek':
-            semester = 3
-        else:
-            semester = 'Remidi'
+        # perlu revisi
+
         mycursor = mydb2.cursor(buffered=True)
 
+        semester_query = "SELECT id_semester FROM dim_semester WHERE  nm_semester LIKE '%" + semester + "%'"
+        mycursor.execute(semester_query)
+        id_semester = mycursor.fetchone()
+        id_semester = id_semester[0]
+
         sql = "SELECT dim_matkul.kode_matkul,nama_matkul,sks,indeks,nilai FROM fact_khs INNER JOIN dim_matkul USING (id_matkul) " \
-              "INNER JOIN dim_semester USING (id_semester) INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
-            semester) + "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
+              "INNER JOIN dim_semester USING (id_semester) INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(id_semester) + \
+              "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
         mycursor.execute(sql)
         rows = mycursor.fetchall()
         for i in range(0, len(rows)):
@@ -542,7 +540,7 @@ class MyFrame1(wx.Frame):
         id_mhs = mycursor.fetchone()
         id_mhs = id_mhs[0]
 
-        ips_query = "UPDATE fact_khs SET IPS = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipstemp, semester, id_mhs)
+        ips_query = "UPDATE fact_khs SET IPS = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipstemp, id_semester, id_mhs)
         mycursor.execute(ips_query)
         mydb2.commit()
 
@@ -550,16 +548,17 @@ class MyFrame1(wx.Frame):
         mycursor.execute(ipk)
         a = mycursor.fetchall()
         ipk_value = 0
-        if semester1 == 'Ganjil':
+
+        if semester == 'Ganjil' and len(a)%2 == 0:
             for i in range(0,len(a)-1):
                 ipk_value = ipk_value + a[i][1]
             ipk_value = ipk_value/(len(a)-1)
         else:
-            for i in range(0, len(a) ):
+            for i in range(0, len(a)):
                 ipk_value = ipk_value + a[i][1]
             ipk_value = ipk_value/len(a)
 
-        fact_khs = "UPDATE fact_khs SET IPK = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipk_value,semester,id_mhs)
+        fact_khs = "UPDATE fact_khs SET IPK = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipk_value,id_semester,id_mhs)
         mycursor.execute(fact_khs)
         mydb2.commit()
 
