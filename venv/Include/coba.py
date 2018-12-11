@@ -423,6 +423,7 @@ class MyFrame1(wx.Frame):
         self.m_button2.Bind(wx.EVT_BUTTON, self.lihat)
         self.m_buttonETL.Bind(wx.EVT_BUTTON, self.etl_test)
         self.m_button4.Bind(wx.EVT_BUTTON, self.onClick_test)
+        self.m_button5.Bind(wx.EVT_BUTTON,self.reset)
         self.m_button6.Bind(wx.EVT_BUTTON,self.onClickNilai)
 
 
@@ -504,6 +505,7 @@ class MyFrame1(wx.Frame):
         self.m_grid3.ClearGrid()
         tahun = self.m_tahun1.GetStringSelection()
         semester = self.m_semester1.GetStringSelection()
+        semester1 = self.m_semester1.GetStringSelection()
         total_nilai = 0
         total_sks = 0
 
@@ -528,12 +530,42 @@ class MyFrame1(wx.Frame):
             total_sks = total_sks + rows[i][2]
             for j in range(0, len(rows[i])):
                 self.m_grid3.SetCellValue(i, j, str(rows[i][j]))
-        a=total_nilai/total_sks
+
+        ipstemp = (total_nilai / total_sks)
         self.m_inputnim.SetFocus()
         self.m_textIPS.Clear()
         self.m_textIPK.Clear()
-        self.m_textIPS.AppendText("%.2f" % (total_nilai / total_sks))
-        self.m_textIPK.AppendText(".2f" % (a))
+        self.m_textIPS.AppendText("%.2f" % ipstemp)
+
+        mhs = "SELECT id_mhs FROM dim_mahasiswa WHERE  NIM LIKE '%" + self.m_inputnim.Value + "%'"
+        mycursor.execute(mhs)
+        id_mhs = mycursor.fetchone()
+        id_mhs = id_mhs[0]
+
+        ips_query = "UPDATE fact_khs SET IPS = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipstemp, semester, id_mhs)
+        mycursor.execute(ips_query)
+        mydb2.commit()
+
+        ipk = "SELECT id_semester,IPS FROM fact_khs INNER JOIN dim_semester USING (id_semester) WHERE  YEAR(tahun_ajaran)<= '" + tahun + "' && id_mhs = '"+ str(id_mhs) +"' GROUP BY id_semester"
+        mycursor.execute(ipk)
+        a = mycursor.fetchall()
+        ipk_value = 0
+        if semester1 == 'Ganjil':
+            for i in range(0,len(a)-1):
+                ipk_value = ipk_value + a[i][1]
+            ipk_value = ipk_value/(len(a)-1)
+        else:
+            for i in range(0, len(a) ):
+                ipk_value = ipk_value + a[i][1]
+            ipk_value = ipk_value/len(a)
+
+        fact_khs = "UPDATE fact_khs SET IPK = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipk_value,semester,id_mhs)
+        mycursor.execute(fact_khs)
+        mydb2.commit()
+
+        self.m_textIPK.AppendText("%.2f" % (ipk_value))
+
+
 
         # ipk = "SELECT IPK FROM fact_khs INNER JOIN dim_semester USING(id_semester) " \
         #       "INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
@@ -543,6 +575,10 @@ class MyFrame1(wx.Frame):
         # print(a)
         # self.m_textIPK.AppendText("%.2f" %(a[0]))
 
+    def reset(self, event):
+        mycursor = mydb2.cursor()
+        sql = "CALL clear()"
+        mycursor.execute(sql)
 
 
 class MainApp(wx.App):
