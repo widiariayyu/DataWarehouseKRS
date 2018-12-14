@@ -31,6 +31,12 @@ def function_insert(sql,mydb2):
     cursor.execute(sql)
     mydb2.commit()
 
+def fun_count(id_table, tb_name,db):
+    cursor = db.cursor()
+    cursor.execute("SELECT COUNT({0}) FROM {1}".format(id_table,tb_name))
+    result = cursor.fetchone()[0]
+    return result
+
 class UpdateConfig:
 
     def get_table_value(self, cursor_args, query_args):
@@ -41,7 +47,6 @@ class UpdateConfig:
 
     def getmax(self,query_args,mydb_args):
         myresult = function_select(query_args, mydb_args)
-        #for x in myresult:
         if myresult[0][0] is None:
             val = 0
             return val
@@ -53,10 +58,9 @@ class UpdateConfig:
             val = 0
             return val
         return result[0][0]
-        #return x[0]
 
 
-def main():
+def main(self):
     mycursor = mydb2.cursor()
    # UpdateConfig().truncateDatabase(mycursor)
     rel_fak = "SELECT MAX(id_fakultas) FROM tb_fakultas"
@@ -150,8 +154,98 @@ def main():
     min_fact_krs = UpdateConfig.getmin(UpdateConfig,fact_krs,mydb2)
     min_fact_khs = UpdateConfig.getmin(UpdateConfig,fact_khs,mydb2)
 
+ #==================================================================================#
+    countRel_fak = fun_count("id_fakultas", "tb_fakultas", mydb)
+    countDim_fak = fun_count("id_fakultas", "dim_fakultas", mydb2)
+
+    add_fakultas = countRel_fak - countDim_fak
+    data_fakultas = [1, 'dim_fakultas', add_fakultas]
+
+    for x in range(0, len(data_fakultas)):
+        self.m_grid10.SetCellValue(0, x, str(data_fakultas[x]))
+
+    countRel_prov = fun_count("id_provinsi", "tb_provinsi", mydb)
+    countDim_prov = fun_count("id_provinsi", "dim_provinsi", mydb2)
+
+    add_prov = countRel_prov - countDim_prov
+    data_prov = [2, 'dim_provinsi', add_prov]
+
+    for x in range(0, len(data_prov)):
+        self.m_grid10.SetCellValue(1, x, str(data_prov[x]))
 
 
+    countRel_kab = fun_count("id_kabupaten", "tb_kabupaten", mydb)
+    countDim_kab = fun_count("id_kabupaten", "dim_kabupaten", mydb2)
+
+    add_kab = countRel_kab - countDim_kab
+    data_kab = [3, 'dim_kabupaten', add_kab]
+
+    for x in range(0, len(data_kab)):
+        self.m_grid10.SetCellValue(2, x, str(data_kab[x]))
+
+    countRel_pa = fun_count("id_pa", "tb_pa", mydb)
+    countDim_pa = fun_count("id_pa", "dim_pa", mydb2)
+
+    add_pa = countRel_pa - countDim_pa
+    data_pa = [4, 'dim_pa', add_pa]
+
+    for x in range(0, len(data_kab)):
+        self.m_grid10.SetCellValue(3, x, str(data_kab[x]))
+
+    countRel_smt = fun_count("id_semester", "tb_semester", mydb)
+    countDim_smt = fun_count("id_semester", "dim_semester", mydb2)
+
+    add_smt = countRel_smt - countDim_smt
+    data_smt = [5, 'dim_semester', add_smt]
+
+    for x in range(0, len(data_smt)):
+        self.m_grid10.SetCellValue(4, x, str(data_smt[x]))
+
+    countRel_matkul = fun_count("id_matkul", "tb_matkul", mydb)
+    countDim_matkul = fun_count("id_matkul", "dim_matkul", mydb2)
+
+    add_matkul = countRel_matkul - countDim_matkul
+    data_matkul = [6, 'dim_matkul', add_matkul]
+
+    for x in range(0, len(data_matkul)):
+        self.m_grid10.SetCellValue(5, x, str(data_matkul[x]))
+
+    countRel_prodi = fun_count("id_prodi", "tb_prodi", mydb)
+    countDim_prodi = fun_count("id_prodi", "dim_prodi", mydb2)
+
+    add_prodi = countRel_prodi - countDim_prodi
+    data_prodi = [7, 'dim_prodi', add_prodi]
+
+    for x in range(0, len(data_prodi)):
+        self.m_grid10.SetCellValue(6, x, str(data_prodi[x]))
+
+    countRel_mhs = fun_count("id_mahasiswa", "tb_mahasiswa", mydb)
+    countDim_mhs = fun_count("id_mhs", "dim_mahasiswa", mydb2)
+
+    add_mhs = countRel_mhs - countDim_mhs
+    data_mhs = [8, 'dim_mahasiswa', add_mhs]
+
+    for x in range(0, len(data_mhs)):
+        self.m_grid10.SetCellValue(7, x, str(data_mhs[x]))
+
+    countRel_krs = fun_count("id_detail", "tb_detailkrs", mydb)
+    countDim_krs = fun_count("id_fact_krs", "fact_krs", mydb2)
+
+    add_krs = countRel_krs - countDim_krs
+    data_krs = [9, 'fact_krs', add_krs]
+
+    for x in range(0, len(data_krs)):
+        self.m_grid10.SetCellValue(8, x, str(data_krs[x]))
+
+    countRel_khs = fun_count("id_detail_khs", "tb_detailkhs", mydb)
+    countDim_khs = fun_count("id_fact_khs", "fact_khs", mydb2)
+
+    add_khs = countRel_khs - countDim_khs
+    data_khs = [10, 'fact_khs', add_khs]
+
+    for x in range(0, len(data_khs)):
+        self.m_grid10.SetCellValue(9, x, str(data_khs[x]))
+#====================================================================================#
     if max_fak > max_fakultas:
         print(min_fak)
         end_row_add_fak = 0
@@ -161,13 +255,9 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(fakultas)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_fak = len(get_data)
-            # print(lenght_add_member)
             end_row_add_fak = get_data[length_add_fak - 1][0]
-            # print(end_row_add_member)
             start_row_add_fak = get_data[0][0]
-            print(end_row_add_fak, start_row_add_fak)
             for x in fakultas_result:
                 id = x[0]
                 nama = x[1]
@@ -216,13 +306,9 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(prov)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_prov = len(get_data)
-            # print(lenght_add_member)
             end_row_add_prov = get_data[length_add_prov - 1][0]
-            # print(end_row_add_member)
             start_row_add_prov = get_data[0][0]
-            print(end_row_add_prov, start_row_add_prov)
             for x in prov_result:
                 id = x[0]
                 nama = x[1]
@@ -271,13 +357,9 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(kab)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_kab = len(get_data)
-            # print(lenght_add_member)
             end_row_add_kab = get_data[length_add_kab - 1][0]
-            # print(end_row_add_member)
             start_row_add_kab = get_data[0][0]
-            print(end_row_add_kab, start_row_add_kab)
             for x in kab_result:
                 id = x[0]
                 nama = x[1]
@@ -329,13 +411,9 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(pembimbing)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_pa = len(get_data)
-            # print(lenght_add_member)
             end_row_add_pa = get_data[length_add_pa - 1][0]
-            # print(end_row_add_member)
             start_row_add_pa = get_data[0][0]
-            print(end_row_add_pa, start_row_add_pa)
             for x in pa_result:
                 id = x[0]
                 nama = x[1]
@@ -390,13 +468,10 @@ def main():
              mycursor = mydb.cursor()
              mycursor.execute(smt)
              get_data = mycursor.fetchall()
-             print(get_data)
              length_add_smt = len(get_data)
-             # print(lenght_add_member)
              end_row_add_smt = get_data[length_add_smt - 1][0]
-             # print(end_row_add_member)
              start_row_add_smt = get_data[0][0]
-             print(end_row_add_smt, start_row_add_smt)
+
              for x in smt_result:
                  id = x[0]
                  nama = x[1]
@@ -449,13 +524,10 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(matkul)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_matkul = len(get_data)
-            # print(lenght_add_member)
             end_row_add_matkul = get_data[length_add_matkul - 1][0]
-            # print(end_row_add_member)
             start_row_add_matkul = get_data[0][0]
-            print(end_row_add_matkul, start_row_add_matkul)
+
             for x in matkul_result:
                 id = x[0]
                 kode = x[1]
@@ -496,14 +568,12 @@ def main():
                     dim_matkul = "INSERT INTO dim_matkul(id_matkul,kode_matkul, nama_matkul, sks) VALUES(%d,'%s','%s',%d)" % (
                         id, kode, nama, sks)
                     function_insert(dim_matkul, mydb2)
-                # print("Terdapat Data Matkul Baru")
 
                 mysql_insert = (
                         "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                     formatted_date, 6, 'dim_matkul', start_row_add_matkul, end_row_add_matkul))
                 function_insert(mysql_insert, mydb2)
 
-                # print("Data Matkul Baru Masuk ke Histori")
 
 
     if max_prodi > max_prodis:
@@ -514,13 +584,10 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(prodi)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_prodi = len(get_data)
-            # print(lenght_add_member)
             end_row_add_prodi = get_data[length_add_prodi - 1][0]
-            # print(end_row_add_member)
             start_row_add_prodi = get_data[0][0]
-            print(end_row_add_prodi, start_row_add_prodi)
+
             for x in prodi_result:
                 id = x[0]
                 nama = x[1]
@@ -572,33 +639,27 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(mhs)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_mhs = len(get_data)
-            # print(lenght_add_member)
             end_row_add_mhs = get_data[length_add_mhs - 1][0]
-            # print(end_row_add_member)
             start_row_add_mhs = get_data[0][0]
-            print(end_row_add_mhs, start_row_add_mhs)
+
         else:
             mhs_result = function_select(mhs + " WHERE id_mahasiswa> {0}".format(max_mahasiswa), mydb)
 
             max_min_mhs = " SELECT MIN(id_mahasiswa), MAX(id_mahasiswa) FROM tb_mahasiswa" \
                           " WHERE id_mahasiswa > " + format(max_mahasiswa)
 
-            print(khs)
             mycursor = mydb.cursor()
             mycursor.execute(max_min_mhs)
             get_data = mycursor.fetchone()
-            print(get_data)
 
             length_add_mhs = len(get_data)
             # print(lenght_add_member)
             end_row_add_mhs = get_data[1]
             # print(end_row_add_member)
             start_row_add_mhs = get_data[0]
-            print(end_row_add_mhs, start_row_add_mhs)
             mhs_result = function_select(mhs, mydb)
-            print(mhs_result)
+
         for x in mhs_result:
 
             id = x[0]
@@ -635,13 +696,10 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(krs)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_krs = len(get_data)
-            # print(lenght_add_member)
             end_row_add_krs = get_data[length_add_krs - 1][0]
-            # print(end_row_add_member)
             start_row_add_krs = get_data[0][0]
-            print(end_row_add_krs, start_row_add_krs)
+
         else:
             krs = " SELECT  id_matkul,id_mahasiswa,id_semester,sks FROM tb_detailkrs " \
                   "INNER JOIN tb_krs USING (id_krs) INNER JOIN tb_mahasiswa USING (id_mahasiswa) " \
@@ -654,16 +712,11 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(max_min_krs)
             get_data = mycursor.fetchone()
-            print(get_data)
-
             length_add_krs = len(get_data)
-            # print(lenght_add_member)
             end_row_add_krs = get_data[1]
-            # print(end_row_add_member)
             start_row_add_krs = get_data[0]
-            print(end_row_add_krs, start_row_add_krs)
             krs_result = function_select(krs, mydb)
-            print(krs_result)
+
         for x in krs_result:
 
             kode = x[0]
@@ -687,13 +740,10 @@ def main():
             mycursor = mydb.cursor()
             mycursor.execute(khs)
             get_data = mycursor.fetchall()
-            print(get_data)
             length_add_khs = len(get_data)
-            # print(lenght_add_member)
             end_row_add_khs = get_data[length_add_khs - 1][0]
-            # print(end_row_add_member)
             start_row_add_khs = get_data[0][0]
-            print(end_row_add_khs, start_row_add_khs)
+
 
         else:
             khs = " SELECT id_semester,id_mahasiswa,id_matkul,nilai,indeks FROM tb_detailkhs           " \
@@ -705,20 +755,14 @@ def main():
             max_min_khs = " SELECT MIN(id_detail_khs), MAX(id_detail_khs) FROM tb_detailkhs" \
                   " WHERE id_detail_khs > " + format(max_fact_khs)
 
-            print(khs)
+
             mycursor = mydb.cursor()
             mycursor.execute(max_min_khs)
             get_data = mycursor.fetchone()
-            print(get_data)
-
             length_add_khs = len(get_data)
-            # print(lenght_add_member)
             end_row_add_khs = get_data[1]
-            # print(end_row_add_member)
             start_row_add_khs = get_data[0]
-            print(end_row_add_khs, start_row_add_khs)
             khs_result = function_select(khs, mydb)
-            print(khs_result)
 
         for x in range(len(khs_result)):
             id_smt = khs_result[x][0]
@@ -754,8 +798,11 @@ def main():
 
             fact_khs = "INSERT INTO fact_khs (id_semester,id_mhs,id_matkul,nilai,indeks,IPS,IPK) VALUES (%d,%d,%d,%f,'%s',%f, %f)" %(id_smt, id_mhs, matkul, nilai, indeks, IPS, IPK)
             function_insert(fact_khs, mydb2)
+
         khs_insert = (
                 "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
             formatted_date, 10, 'fact_khs', start_row_add_khs, end_row_add_khs))
         function_insert(khs_insert, mydb2)
 
+    mydb.rollback()
+    mydb2.rollback()

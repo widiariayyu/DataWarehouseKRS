@@ -2,6 +2,7 @@ import wx
 import wx.grid
 import mysql.connector
 import history
+import excel
 
 
 mydb2 = mysql.connector.connect(
@@ -135,13 +136,18 @@ class MyFrame1(wx.Frame):
         bSizer9.Add(self.m_semester, 0, wx.ALL, 5)
 
         bSizer7.Add(bSizer9, 1, wx.EXPAND, 5)
+        bSizer25 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.m_button1 = wx.Button(self.m_panel1, wx.ID_ANY, u"Submit", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer7.Add(self.m_button1, 0, wx.ALL, 5)
+        bSizer25.Add(self.m_button1, 0, wx.ALL, 5)
+        self.m_button9 = wx.Button(self.m_panel1, wx.ID_ANY, u"Show to Excel", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer25.Add(self.m_button9, 0, wx.ALL, 5)
 
+        bSizer7.Add(bSizer25, 1, wx.EXPAND, 5)
         bSizer41.Add(bSizer7, 1, wx.EXPAND, 5)
 
         bSizer5 = wx.BoxSizer(wx.VERTICAL)
+
 
         self.m_grid2 = wx.grid.Grid(self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size(900, 500), 0)
 
@@ -224,10 +230,14 @@ class MyFrame1(wx.Frame):
         bSizer13.Add(self.m_inputnim, 0, wx.ALL, 5)
 
         bSizer71.Add(bSizer13, 1, wx.EXPAND, 5)
+        bSizer25 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.m_button2 = wx.Button(self.m_panel2, wx.ID_ANY, u"Submit", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer71.Add(self.m_button2, 0, wx.ALL, 5)
+        bSizer25.Add(self.m_button2, 0, wx.ALL, 5)
+        self.m_button20 = wx.Button(self.m_panel2, wx.ID_ANY, u"Show to Excel", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer25.Add(self.m_button20, 0, wx.ALL, 5)
 
+        bSizer71.Add(bSizer25, 1, wx.EXPAND, 5)
         bSizer411.Add(bSizer71, 1, wx.EXPAND, 5)
 
         bSizer51 = wx.BoxSizer(wx.VERTICAL)
@@ -351,8 +361,15 @@ class MyFrame1(wx.Frame):
 
         bSizer19.Add(bSizer26, 1, wx.EXPAND, 5)
 
+        bSizer241 = wx.BoxSizer(wx.HORIZONTAL)
+
         self.m_button6 = wx.Button(self.m_panel4, wx.ID_ANY, u"Submit", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer19.Add(self.m_button6, 0, wx.ALL, 5)
+        bSizer241.Add(self.m_button6, 0, wx.ALL, 5)
+
+        self.m_button8 = wx.Button(self.m_panel4, wx.ID_ANY, u"Show to Excel", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer241.Add(self.m_button8, 0, wx.ALL, 5)
+
+        bSizer19.Add(bSizer241, 1, wx.EXPAND, 5)
 
         bSizer17.Add(bSizer19, 1, wx.EXPAND, 5)
 
@@ -421,18 +438,21 @@ class MyFrame1(wx.Frame):
 
         self.m_button1.Bind(wx.EVT_BUTTON, self.submit)
         self.m_button2.Bind(wx.EVT_BUTTON, self.lihat)
-        self.m_buttonETL.Bind(wx.EVT_BUTTON, self.etl_test)
+        self.m_buttonETL.Bind(wx.EVT_BUTTON, self.OnModal)
         self.m_button4.Bind(wx.EVT_BUTTON, self.onClick_test)
+        self.m_button5.Bind(wx.EVT_BUTTON,self.reset)
         self.m_button6.Bind(wx.EVT_BUTTON,self.onClickNilai)
+        self.m_button8.Bind(wx.EVT_BUTTON,self.excel_matkul)
+        self.m_button9.Bind(wx.EVT_BUTTON, self.excel_mahasiswa)
+        self.m_button20.Bind(wx.EVT_BUTTON, self.excel_KHS)
 
 
 
     def __del__(self):
         pass
 
-    def etl_test(self,event):
-        history.main()
-        pass
+    def OnModal(self, event):
+        dlg = MyDialog(self, "Dialog").Show()
 
     def onClick_test(self,event):
         self.m_grid6.ClearGrid()
@@ -482,18 +502,17 @@ class MyFrame1(wx.Frame):
         self.m_grid2.ClearGrid()
         tahun = self.m_tahun.GetStringSelection()
         semester = self.m_semester.GetStringSelection()
-        if semester == 'Ganjil':
-            semester = 1
-        elif semester == 'Genap':
-            semester = 2
-        elif semester == 'Pendek':
-            semester = 3
-        else:
-            semester = 'Remidi'
+
         mycursor = mydb2.cursor()
+
+        semester_query = "SELECT id_semester FROM dim_semester WHERE  nm_semester LIKE '%" + semester + "%'"
+        mycursor.execute(semester_query)
+        id_semester = mycursor.fetchone()
+        id_semester = id_semester[0]
+
         sql = "SELECT nama_matkul,sks,COUNT(nama_mhs) AS total FROM fact_krs INNER JOIN dim_matkul USING (id_matkul)" \
               "INNER JOIN dim_mahasiswa USING (id_mhs) INNER JOIN dim_semester USING (id_semester) " \
-              "WHERE id_semester = '"+str(semester)+"' && YEAR(tahun_ajaran)='"+tahun+"' GROUP BY nama_matkul"
+              "WHERE id_semester = '"+str(id_semester)+"' && YEAR(tahun_ajaran)='"+tahun+"' GROUP BY nama_matkul"
         mycursor.execute(sql)
         rows = mycursor.fetchall()
         for i in range(0, len(rows)):
@@ -508,19 +527,18 @@ class MyFrame1(wx.Frame):
         total_sks = 0
 
         # ipk = self.m_textIPK.AppendText()
-        if semester == 'Ganjil':
-            semester = 1
-        elif semester == 'Genap':
-            semester = 2
-        elif semester == 'Pendek':
-            semester = 3
-        else:
-            semester = 'Remidi'
+        # perlu revisi
+
         mycursor = mydb2.cursor(buffered=True)
 
+        semester_query = "SELECT id_semester FROM dim_semester WHERE  nm_semester LIKE '%" + semester + "%'"
+        mycursor.execute(semester_query)
+        id_semester = mycursor.fetchone()
+        id_semester = id_semester[0]
+
         sql = "SELECT dim_matkul.kode_matkul,nama_matkul,sks,indeks,nilai FROM fact_khs INNER JOIN dim_matkul USING (id_matkul) " \
-              "INNER JOIN dim_semester USING (id_semester) INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
-            semester) + "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
+              "INNER JOIN dim_semester USING (id_semester) INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(id_semester) + \
+              "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
         mycursor.execute(sql)
         rows = mycursor.fetchall()
         for i in range(0, len(rows)):
@@ -528,12 +546,43 @@ class MyFrame1(wx.Frame):
             total_sks = total_sks + rows[i][2]
             for j in range(0, len(rows[i])):
                 self.m_grid3.SetCellValue(i, j, str(rows[i][j]))
-        a=total_nilai/total_sks
+
+        ipstemp = (total_nilai / total_sks)
         self.m_inputnim.SetFocus()
         self.m_textIPS.Clear()
         self.m_textIPK.Clear()
-        self.m_textIPS.AppendText("%.2f" % (total_nilai / total_sks))
-        self.m_textIPK.AppendText(".2f" % (a))
+        self.m_textIPS.AppendText("%.2f" % ipstemp)
+
+        mhs = "SELECT id_mhs FROM dim_mahasiswa WHERE  NIM LIKE '%" + self.m_inputnim.Value + "%'"
+        mycursor.execute(mhs)
+        id_mhs = mycursor.fetchone()
+        id_mhs = id_mhs[0]
+
+        ips_query = "UPDATE fact_khs SET IPS = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipstemp, id_semester, id_mhs)
+        mycursor.execute(ips_query)
+        mydb2.commit()
+
+        ipk = "SELECT id_semester,IPS FROM fact_khs INNER JOIN dim_semester USING (id_semester) WHERE  YEAR(tahun_ajaran)<= '" + tahun + "' && id_mhs = '"+ str(id_mhs) +"' GROUP BY id_semester"
+        mycursor.execute(ipk)
+        a = mycursor.fetchall()
+        ipk_value = 0
+
+        if semester == 'Ganjil' and len(a)%2 == 0:
+            for i in range(0,len(a)-1):
+                ipk_value = ipk_value + a[i][1]
+            ipk_value = ipk_value/(len(a)-1)
+        else:
+            for i in range(0, len(a)):
+                ipk_value = ipk_value + a[i][1]
+            ipk_value = ipk_value/len(a)
+
+        fact_khs = "UPDATE fact_khs SET IPK = (%f) WHERE id_semester =(%s) && id_mhs = (%s)" % (ipk_value,id_semester,id_mhs)
+        mycursor.execute(fact_khs)
+        mydb2.commit()
+
+        self.m_textIPK.AppendText("%.2f" % (ipk_value))
+
+
 
         # ipk = "SELECT IPK FROM fact_khs INNER JOIN dim_semester USING(id_semester) " \
         #       "INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
@@ -543,7 +592,115 @@ class MyFrame1(wx.Frame):
         # print(a)
         # self.m_textIPK.AppendText("%.2f" %(a[0]))
 
+    def reset(self, event):
+        mycursor = mydb2.cursor()
+        sql = "CALL clear()"
+        mycursor.execute(sql)
+        pass
+        wx.MessageBox("Data berhasil Dihapus", "Message", wx.OK | wx.ICON_INFORMATION)
+        self.m_grid6.ClearGrid()
 
+    def excel_matkul(self, event):
+        excel.excel_nilai(self)
+        wx.MessageBox('Export Nilai Matakuliah Berhasil','Sukses',wx.OK)
+
+    def excel_mahasiswa(self, event):
+        excel.excel_mahasiswa(self)
+        wx.MessageBox('Export Laporan Berhasil','Sukses',wx.OK)
+
+    def excel_KHS(self, event):
+        excel.excel_KHS(self)
+        wx.MessageBox('Export Laporan KHS','Sukses',wx.OK)
+
+
+class MyDialog(wx.Dialog):
+    def __init__(self, parent,title):
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, pos=wx.DefaultPosition,
+                          size=wx.Size(500, 370), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+
+        self.SetSizeHintsSz(wx.DefaultSize, wx.DefaultSize)
+
+        bSizer1 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_notebook1 = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_panel1 = wx.Panel(self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        bSizer2 = wx.BoxSizer(wx.VERTICAL)
+
+        self.m_grid10 = wx.grid.Grid(self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.Size(500, -1), 0)
+
+        # Grid
+        self.m_grid10.CreateGrid(10, 3)
+        self.m_grid10.EnableEditing(True)
+        self.m_grid10.EnableGridLines(True)
+        self.m_grid10.EnableDragGridSize(False)
+        self.m_grid10.SetMargins(0, 0)
+
+        # Columns
+        self.m_grid10.SetColSize(0, 125)
+        self.m_grid10.SetColSize(1, 133)
+        self.m_grid10.SetColSize(2, 111)
+        self.m_grid10.EnableDragColMove(False)
+        self.m_grid10.EnableDragColSize(True)
+        self.m_grid10.SetColLabelSize(30)
+        self.m_grid10.SetColLabelValue(0, u"ID Tabel")
+        self.m_grid10.SetColLabelValue(1, u"Nama Tabel")
+        self.m_grid10.SetColLabelValue(2, u"Jumlah Data")
+        self.m_grid10.SetColLabelAlignment(wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
+
+        # Rows
+        self.m_grid10.EnableDragRowSize(True)
+        self.m_grid10.SetRowLabelSize(80)
+        self.m_grid10.SetRowLabelAlignment(wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
+
+        # Label Appearance
+
+        # Cell Defaults
+        self.m_grid10.SetDefaultCellAlignment(wx.ALIGN_LEFT, wx.ALIGN_TOP)
+        bSizer2.Add(self.m_grid10, 0, wx.ALL, 5)
+
+        bSizer3 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.m_staticText1 = wx.StaticText(self.m_panel1, wx.ID_ANY, u"Last Updated", wx.DefaultPosition,
+                                           wx.DefaultSize, 0)
+        self.m_staticText1.Wrap(-1)
+        bSizer3.Add(self.m_staticText1, 0, wx.ALL, 5)
+
+        self.m_staticText2 = wx.StaticText(self.m_panel1, wx.ID_ANY, u":", wx.DefaultPosition, wx.Size(10, -1), 0)
+        self.m_staticText2.Wrap(-1)
+        bSizer3.Add(self.m_staticText2, 0, wx.ALL, 5)
+
+        self.m_date = wx.StaticText(self.m_panel1, wx.ID_ANY, u"test", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_date.Wrap(-1)
+        bSizer3.Add(self.m_date, 0, wx.ALL, 5)
+
+        bSizer2.Add(bSizer3, 1, wx.EXPAND, 5)
+
+        self.m_button10 = wx.Button(self.m_panel1, wx.ID_ANY, u"Submit", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer2.Add(self.m_button10, 0, wx.ALL, 5)
+
+        self.m_panel1.SetSizer(bSizer2)
+        self.m_panel1.Layout()
+        bSizer2.Fit(self.m_panel1)
+        self.m_notebook1.AddPage(self.m_panel1, u"Label", False)
+
+        bSizer1.Add(self.m_notebook1, 1, wx.EXPAND | wx.ALL, 5)
+        self.m_button10.Bind(wx.EVT_BUTTON, self.etl_test)
+        # self.m_button10.Bind(wx.EVT_BUTTON, self.Onmsgbox)
+        self.SetSizer(bSizer1)
+        self.Layout()
+
+        self.Centre(wx.BOTH)
+
+    def etl_test(self, event):
+        history.main(self)
+        pass
+        wx.MessageBox("Data berhasil diperbaharui", "Message", wx.OK | wx.ICON_INFORMATION)
+
+    def __del__(self):
+        pass
+
+    def OnModal(self, event):
+        dlg = MyDialog(self, "Dialog").Show()
 
 class MainApp(wx.App):
  def OnInit(self):
