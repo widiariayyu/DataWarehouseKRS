@@ -596,6 +596,7 @@ class MyFrame1(wx.Frame):
         mycursor = mydb2.cursor()
         sql = "CALL clear()"
         mycursor.execute(sql)
+
         pass
         wx.MessageBox("Data berhasil Dihapus", "Message", wx.OK | wx.ICON_INFORMATION)
         self.m_grid6.ClearGrid()
@@ -693,11 +694,12 @@ class MyDialog(wx.Dialog):
 
     def etl_test(self, event):
         history.main(self)
-        pass
+        pass1
         wx.MessageBox("Data berhasil diperbaharui", "Message", wx.OK | wx.ICON_INFORMATION)
 
     def __del__(self):
         pass
+
 
     def OnModal(self, event):
         dlg = MyDialog(self, "Dialog").Show()
