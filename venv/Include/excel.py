@@ -104,8 +104,7 @@ def excel_KHS(self):
     sheet.write(0, 3, "SKS")
     sheet.write(0, 4, "Indeks")
     sheet.write(0, 5, "Nilai")
-    sheet.write(0, 6,  "IPS")
-    sheet.write(0, 7, "IPK")
+
 
     # Body
     row = 1
@@ -152,8 +151,12 @@ def excel_KHS(self):
         sheet.write(row, col + 3, val_c)
         sheet.write(row, col + 4, val_d)
         sheet.write(row, col + 5, val_e)
-        sheet.write(row, col + 6, a[0][0])
-        sheet.write(row, col + 7, a[0][1])
+
 
         row += 1
+    sheet.write(12, 1 , "IPS")
+    sheet.write(13, 1, "IPK")
+    sheet.write(12, 2, a[0][0])
+    sheet.write(13, 2, a[0][1])
     excel_file.close()
+
