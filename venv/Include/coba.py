@@ -3,6 +3,7 @@ import wx.grid
 import mysql.connector
 import history
 import excel
+import time
 
 
 mydb2 = mysql.connector.connect(
@@ -467,12 +468,15 @@ class MyFrame1(wx.Frame):
 
 
     def onExit(self,event):
+        start_time = time.time()
         self.Close()
+        print("---Exit: %s seconds ---" % (time.time() - start_time))
 
     def __del__(self):
         pass
 
     def onClickNilai(self,event):
+        start_time = time.time()
         self.m_grid4.ClearGrid()
         tahun = self.m_choice71.GetStringSelection()
         semester = self.m_choice8.GetStringSelection()
@@ -497,8 +501,9 @@ class MyFrame1(wx.Frame):
         for i in range(0, len(rows)):
             for j in range(0, len(rows[i])):
                 self.m_grid4.SetCellValue(i, j, str(rows[i][j]))
-
+        print("---Daftar Nilai: %s seconds ---" % (time.time() - start_time))
     def submit(self,event):
+        start_time = time.time()
         self.m_grid2.ClearGrid()
         tahun = self.m_tahun.GetStringSelection()
         semester = self.m_semester.GetStringSelection()
@@ -518,8 +523,9 @@ class MyFrame1(wx.Frame):
         for i in range(0, len(rows)):
             for j in range(0, len(rows[i])):
                 self.m_grid2.SetCellValue(i, j, str(rows[i][j]))
-
+        print("---Laporan Mahasiswa: %s seconds ---" % (time.time() - start_time))
     def lihat(self, event):
+        start_time = time.time()
         self.m_grid3.ClearGrid()
         tahun = self.m_tahun1.GetStringSelection()
         semester = self.m_semester1.GetStringSelection()
@@ -582,8 +588,7 @@ class MyFrame1(wx.Frame):
 
         self.m_textIPK.AppendText("%.2f" % (ipk_value))
 
-
-
+        print("---KHS: %s seconds ---" % (time.time() - start_time))
         # ipk = "SELECT IPK FROM fact_khs INNER JOIN dim_semester USING(id_semester) " \
         #       "INNER JOIN dim_mahasiswa USING (id_mhs) WHERE id_semester ='" + str(
         #     semester) + "' && YEAR(tahun_ajaran)='" + tahun + "' && NIM LIKE '%" + self.m_inputnim.Value + "%'"
@@ -593,24 +598,31 @@ class MyFrame1(wx.Frame):
         # self.m_textIPK.AppendText("%.2f" %(a[0]))
 
     def reset(self, event):
+        start_time = time.time()
         mycursor = mydb2.cursor()
         sql = "CALL clear()"
         mycursor.execute(sql)
-
+        print("---Truncate: %s seconds ---" % (time.time() - start_time))
         pass
         wx.MessageBox("Data berhasil Dihapus", "Message", wx.OK | wx.ICON_INFORMATION)
         self.m_grid6.ClearGrid()
 
     def excel_matkul(self, event):
+        start_time = time.time()
         excel.excel_nilai(self)
+        print("---Excel_Matkul: %s seconds ---" % (time.time() - start_time))
         wx.MessageBox('Export Nilai Matakuliah Berhasil','Sukses',wx.OK)
 
     def excel_mahasiswa(self, event):
+        start_time = time.time()
         excel.excel_mahasiswa(self)
+        print("---Excel_Mahasiswa %s seconds ---" % (time.time() - start_time))
         wx.MessageBox('Export Laporan Berhasil','Sukses',wx.OK)
 
     def excel_KHS(self, event):
+        start_time = time.time()
         excel.excel_KHS(self)
+        print("---Excel_KHS %s seconds ---" % (time.time() - start_time))
         wx.MessageBox('Export Laporan KHS','Sukses',wx.OK)
 
 
@@ -693,8 +705,10 @@ class MyDialog(wx.Dialog):
         self.Centre(wx.BOTH)
 
     def etl_test(self, event):
+        start_time = time.time()
         history.main(self)
-        pass1
+        print("---ETL: %s seconds ---" % (time.time() - start_time))
+        pass
         wx.MessageBox("Data berhasil diperbaharui", "Message", wx.OK | wx.ICON_INFORMATION)
 
     def __del__(self):
