@@ -99,14 +99,13 @@ def excel_KHS(self):
     sheet = excel_file.add_worksheet('sheet_month')
     # Header
     sheet.write(0, 0, "No")
-    sheet.write(0, 1, "NIM")
-    sheet.write(0, 2, "Kode Matakuliah")
-    sheet.write(0, 3, "Matakuliah")
-    sheet.write(0, 4, "SKS")
-    sheet.write(0, 5, "Indeks")
-    sheet.write(0, 6, "Nilai")
-    sheet.write(0, 7, "IPS")
-    sheet.write(0, 8, "IPK")
+    sheet.write(0, 1, "Kode Matakuliah")
+    sheet.write(0, 2, "Matakuliah")
+    sheet.write(0, 3, "SKS")
+    sheet.write(0, 4, "Indeks")
+    sheet.write(0, 5, "Nilai")
+    sheet.write(0, 6,  "IPS")
+    sheet.write(0, 7, "IPK")
 
     # Body
     row = 1
@@ -148,14 +147,13 @@ def excel_KHS(self):
 
     for val_a, val_b, val_c, val_d, val_e in (rows):
         sheet.write(row, col, row)
-        sheet.write(row, col + 1, self.m_inputnim.Value)
-        sheet.write(row, col + 2, val_a)
-        sheet.write(row, col + 3, val_b)
-        sheet.write(row, col + 4, val_c)
-        sheet.write(row, col + 5, val_d)
-        sheet.write(row, col + 6, val_e)
-        sheet.write(row, col + 7, a[0][0])
-        sheet.write(row, col + 8, a[0][1])
+        sheet.write(row, col + 1, val_a)
+        sheet.write(row, col + 2, val_b)
+        sheet.write(row, col + 3, val_c)
+        sheet.write(row, col + 4, val_d)
+        sheet.write(row, col + 5, val_e)
+        sheet.write(row, col + 6, a[0][0])
+        sheet.write(row, col + 7, a[0][1])
 
         row += 1
     excel_file.close()
