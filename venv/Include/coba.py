@@ -459,7 +459,7 @@ class MyFrame1(wx.Frame):
         self.m_grid6.ClearGrid()
         tahun = self.m_choice7.GetStringSelection()
         mycursor = mydb2.cursor()
-        sql = "SELECT update_log.`date`,master_id,master_name,start_row,end_row FROM update_log WHERE YEAR(date)='" + tahun + "' ORDER BY id DESC LIMIT 10"
+        sql = "SELECT update_log.`date`,main_id,main_name,start_row,end_row FROM update_log WHERE YEAR(date)='" + tahun + "' ORDER BY id DESC LIMIT 10"
         mycursor.execute(sql)
         rows = mycursor.fetchall()
         for i in range(0, len(rows)):
