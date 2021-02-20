@@ -264,14 +264,14 @@ def main(self):
                 fak = "INSERT INTO dim_fakultas (id_fakultas, nm_fakultas) VALUES (%d,'%s')" % (id, nama)
                 function_insert(fak, mydb2)
             mysql_insert = (
-                    "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                    "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                 formatted_date, 1, 'dim_fakultas', start_row_add_fak, end_row_add_fak))
             function_insert(mysql_insert, mydb2)
 
         else:
 
             fakultas_result = function_select(fakultas+" WHERE id_fakultas > {0}".format(max_fakultas), mydb)
-            max_min_fak = "SELECT update_log.`end_row` FROM update_log WHERE master_id = 1 ORDER BY update_log.`date` DESC LIMIT 1;"
+            max_min_fak = "SELECT update_log.`end_row` FROM update_log WHERE main_id = 1 ORDER BY update_log.`date` DESC LIMIT 1;"
 
             cursor = mydb.cursor()
             mycursor = mydb2.cursor()
@@ -293,7 +293,7 @@ def main(self):
                     fak = "INSERT INTO dim_fakultas (id_fakultas, nm_fakultas) VALUES (%d,'%s')" % (id, nama)
                     function_insert(fak, mydb2)
                 mysql_insert = (
-                        "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                        "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                 formatted_date, 1, 'dim_fakultas', start_row_add_fak, end_row_add_fak))
                 function_insert(mysql_insert, mydb2)
 
@@ -316,12 +316,12 @@ def main(self):
                 function_insert(dim_prov, mydb2)
 
             mysql_insert = (
-                    "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                    "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                 formatted_date, 2, 'dim_provinsi', start_row_add_prov, end_row_add_prov))
             function_insert(mysql_insert, mydb2)
         else:
             prov_result = function_select(prov + " WHERE id_provinsi > {0}".format(max_provinsi), mydb)
-            max_min_prov = "SELECT update_log.`end_row` FROM update_log WHERE master_id = 2 ORDER BY update_log.`date` DESC LIMIT 1;"
+            max_min_prov = "SELECT update_log.`end_row` FROM update_log WHERE main_id = 2 ORDER BY update_log.`date` DESC LIMIT 1;"
 
             cursor = mydb.cursor()
             mycursor = mydb2.cursor()
@@ -344,7 +344,7 @@ def main(self):
                     function_insert(dim_prov, mydb2)
 
                 mysql_insert = (
-                        "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                        "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                     formatted_date, 2, 'dim_provinsi', start_row_add_prov, end_row_add_prov))
                 function_insert(mysql_insert, mydb2)
 
@@ -369,12 +369,12 @@ def main(self):
                 function_insert(dim_kab, mydb2)
 
             mysql_insert = (
-                    "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                    "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                 formatted_date, 3, 'dim_kabupaten', start_row_add_kab, end_row_add_kab))
             function_insert(mysql_insert, mydb2)
         else:
             kab_result = function_select(kab + " WHERE id_kabupaten > {0}".format(max_kabupaten), mydb)
-            max_min_kab = "SELECT update_log.`end_row` FROM update_log WHERE master_id = 3 ORDER BY update_log.`date` DESC LIMIT 1;"
+            max_min_kab = "SELECT update_log.`end_row` FROM update_log WHERE main_id = 3 ORDER BY update_log.`date` DESC LIMIT 1;"
 
             cursor = mydb.cursor()
             mycursor = mydb2.cursor()
@@ -399,7 +399,7 @@ def main(self):
                     function_insert(dim_kab, mydb2)
 
                 mysql_insert = (
-                        "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                        "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                     formatted_date, 3, 'dim_kabupaten', start_row_add_kab, end_row_add_kab))
                 function_insert(mysql_insert, mydb2)
 
@@ -423,13 +423,13 @@ def main(self):
                     id, nama, alamat, no_telp)
                 function_insert(dim_pa, mydb2)
             mysql_insert = (
-                    "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                    "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                 formatted_date, 4, 'dim_pa', start_row_add_pa, end_row_add_pa))
             function_insert(mysql_insert, mydb2)
 
         else:
             pa_result = function_select(pembimbing + " WHERE id_pa > {0}".format(max_pembimbing), mydb)
-            max_min_pa = "SELECT update_log.`end_row` FROM update_log WHERE master_id = 4 ORDER BY update_log.`date` DESC LIMIT 1;"
+            max_min_pa = "SELECT update_log.`end_row` FROM update_log WHERE main_id = 4 ORDER BY update_log.`date` DESC LIMIT 1;"
 
             cursor = mydb.cursor()
             mycursor = mydb2.cursor()
@@ -455,7 +455,7 @@ def main(self):
                         id, nama, alamat, no_telp)
                     function_insert(dim_pa, mydb2)
                 mysql_insert = (
-                        "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                        "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                     formatted_date, 4, 'dim_pa', start_row_add_pa, end_row_add_pa))
                 function_insert(mysql_insert, mydb2)
 
@@ -480,12 +480,12 @@ def main(self):
                      id, nama, tahun)
                  function_insert(dim_smt, mydb2)
              mysql_insert = (
-                     "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                     "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                  formatted_date, 5, 'dim_semester', start_row_add_smt, end_row_add_smt))
              function_insert(mysql_insert, mydb2)
         else:
             smt_result = function_select(smt + " WHERE id_semester > {0}".format(max_semester), mydb)
-            max_min_smt = "SELECT update_log.`end_row` FROM update_log WHERE master_id = 5 ORDER BY update_log.`date` DESC LIMIT 1;"
+            max_min_smt = "SELECT update_log.`end_row` FROM update_log WHERE main_id = 5 ORDER BY update_log.`date` DESC LIMIT 1;"
 
             cursor = mydb.cursor()
             mycursor = mydb2.cursor()
@@ -510,7 +510,7 @@ def main(self):
                         id, nama, tahun)
                     function_insert(dim_smt, mydb2)
                 mysql_insert = (
-                        "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                        "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                     formatted_date, 5, 'dim_semester', start_row_add_smt, end_row_add_smt))
                 function_insert(mysql_insert, mydb2)
 
@@ -537,13 +537,13 @@ def main(self):
                     id, kode, nama, sks)
                 function_insert(dim_matkul, mydb2)
             mysql_insert = (
-                    "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                    "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                 formatted_date, 6, 'dim_matkul', start_row_add_matkul, end_row_add_matkul))
             function_insert(mysql_insert, mydb2)
 
         else:
             matkul_result = function_select(matkul + " WHERE id_matkul > {0}".format(max_matakul),mydb)
-            max_min_matkul = "SELECT update_log.`end_row` FROM update_log WHERE master_id = 6 ORDER BY update_log.`date` DESC LIMIT 1;"
+            max_min_matkul = "SELECT update_log.`end_row` FROM update_log WHERE main_id = 6 ORDER BY update_log.`date` DESC LIMIT 1;"
 
             cursor= mydb.cursor()
             mycursor = mydb2.cursor()
@@ -570,7 +570,7 @@ def main(self):
                     function_insert(dim_matkul, mydb2)
 
                 mysql_insert = (
-                        "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                        "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                     formatted_date, 6, 'dim_matkul', start_row_add_matkul, end_row_add_matkul))
                 function_insert(mysql_insert, mydb2)
 
@@ -596,12 +596,12 @@ def main(self):
                 id, nama, id_fak)
                 function_insert(prodi_s, mydb2)
             mysql_insert = (
-                    "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                    "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                 formatted_date, 7, 'dim_prodi', start_row_add_prodi, end_row_add_prodi))
             function_insert(mysql_insert, mydb2)
         else:
             prodi_result = function_select(prodi + " WHERE id_prodi > {0}".format(max_prodis), mydb)
-            max_min_prodi = "SELECT update_log.`end_row` FROM update_log WHERE master_id = 7 ORDER BY update_log.`date` DESC LIMIT 1;"
+            max_min_prodi = "SELECT update_log.`end_row` FROM update_log WHERE main_id = 7 ORDER BY update_log.`date` DESC LIMIT 1;"
 
             cursor = mydb.cursor()
             mycursor = mydb2.cursor()
@@ -625,7 +625,7 @@ def main(self):
                     id, nama, id_fak)
                     function_insert(prodi_s, mydb2)
                 mysql_insert = (
-                        "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                        "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
                     formatted_date, 7, 'dim_prodi', start_row_add_prodi, end_row_add_prodi))
                 function_insert(mysql_insert, mydb2)
 
@@ -684,7 +684,7 @@ def main(self):
             function_insert(mahasiswa, mydb2)
 
         mysql_insert = (
-                "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
             formatted_date, 8, 'dim_mahasiswa', start_row_add_mhs, end_row_add_mhs))
         function_insert(mysql_insert, mydb2)
 
@@ -728,7 +728,7 @@ def main(self):
             function_insert(fact_krs, mydb2)
 
         krs_insert = (
-                "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
             formatted_date, 9, 'fact_krs', start_row_add_krs, end_row_add_krs))
         function_insert(krs_insert, mydb2)
 
@@ -800,7 +800,7 @@ def main(self):
             function_insert(fact_khs, mydb2)
 
         khs_insert = (
-                "INSERT INTO update_log (date,master_id,master_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
+                "INSERT INTO update_log (date,main_id,main_name,start_row,end_row) VALUES ('%s',%d,'%s',%d,%d)" % (
             formatted_date, 10, 'fact_khs', start_row_add_khs, end_row_add_khs))
         function_insert(khs_insert, mydb2)
 
